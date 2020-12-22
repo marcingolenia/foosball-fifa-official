@@ -15,8 +15,8 @@ let ``GIVEN freshly opened game WHEN recordScore for yellow's THEN scores list c
   let game = recordScore ``An open game`` yellowTeam scoredAt
   // Assert
   match game with
-  | Finished _ -> failwith "Game still should be open!"
-  | Open game ->
+  | FinishedGame _ -> failwith "Game still should be open!"
+  | OpenGame game ->
       game.Score |> should haveLength 1
       game.Score.Head |> should haveLength 1
       game.Score.Head |> should contain { By = yellowTeam; At = scoredAt }
@@ -30,8 +30,8 @@ let ``GIVEN freshly opened game WHEN recordScore for black's THEN scores list co
   let game = recordScore ``An open game`` blackTeam scoredAt
   // Assert
   match game with
-  | Finished _ -> failwith "Game still should be open!"
-  | Open game ->
+  | FinishedGame _ -> failwith "Game still should be open!"
+  | OpenGame game ->
       game.Score |> should haveLength 1
       game.Score.Head |> should haveLength 1
       game.Score.Head |> should contain { By = blackTeam; At = scoredAt }
@@ -49,8 +49,8 @@ let ``GIVEN open game with 2:2 score WHEN recordScore for black's team THEN the 
   // Assert
   let fstSet =
     match gameAfterScore with
-    | Finished _ -> failwith "Game still should be open!"
-    | Open game -> game.Score.Head
+    | FinishedGame _ -> failwith "Game still should be open!"
+    | OpenGame game -> game.Score.Head
   let points = fstSet |> List.groupBy (fun score -> score.By |> snd) |> Map.ofList
   points.[Black].Length |> should equal 3
   points.[Yellow].Length |> should equal 2
@@ -68,8 +68,8 @@ let ``GIVEN open game with 2:2 score WHEN recordScore for yellow's team THEN the
   // Assert
   let fstSet =
     match gameAfterScore with
-    | Finished _ -> failwith "Game still should be open!"
-    | Open game -> game.Score.Head
+    | FinishedGame _ -> failwith "Game still should be open!"
+    | OpenGame game -> game.Score.Head
   let points = fstSet |> List.groupBy (fun score -> score.By |> snd) |> Map.ofList
   points.[Yellow].Length |> should equal 3
   points.[Black].Length |> should equal 2

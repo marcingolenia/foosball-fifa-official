@@ -8,6 +8,7 @@
         <Compile Include="opening_game.fs" />
         <Compile Include="making_points_within_set.fs" />
         <Compile Include="winning_sets.fs" />
+        <Compile Include="finishing_game.fs" />
         <Compile Include="Program.fs" />
     </ItemGroup>
     <ItemGroup>

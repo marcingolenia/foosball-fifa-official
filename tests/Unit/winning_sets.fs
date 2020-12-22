@@ -11,7 +11,6 @@ let ``GIVEN open game with 9:9 AND rule says that 10 scores is the limit WHEN re
   // Arrange
   let yellowTeam = (TeamId "Destroyers", TeamColor.Yellow)
   let scoredAt = DateTime.UtcNow
-
   let gameBeforeScore =
     ``An open game``
     |> ``set rule saying that set points limit is`` 10uy
@@ -22,9 +21,8 @@ let ``GIVEN open game with 9:9 AND rule says that 10 scores is the limit WHEN re
   // Assert
   let newScore =
     match gameAfterScore with
-    | Finished _ -> failwith "Game still should be open!"
-    | Open game -> game.Score
-
+    | FinishedGame _ -> failwith "Game still should be open!"
+    | OpenGame game -> game.Score
   let points = newScore.Head |> List.groupBy (fun score -> score.By |> snd) |> Map.ofList
   points.[Yellow].Length |> should equal 10
   points.[Black].Length |> should equal 9
@@ -46,9 +44,8 @@ let ``GIVEN open game with 9:9 AND rule says that 10 scores is the limit WHEN re
   // Assert
   let newScore =
     match gameAfterScore with
-    | Finished _ -> failwith "Game still should be open!"
-    | Open game -> game.Score
-
+    | FinishedGame _ -> failwith "Game still should be open!"
+    | OpenGame game -> game.Score
   let points = newScore.Head |> List.groupBy (fun score -> score.By |> snd) |> Map.ofList
   points.[Yellow].Length |> should equal 9
   points.[Black].Length |> should equal 10
@@ -72,9 +69,8 @@ let ``GIVEN open game with 1:0 in sets for yellows AND current set points are 9:
   // Assert
   let newScore =
     match gameAfterScore with
-    | Finished _ -> failwith "Game still should be open!"
-    | Open game -> game.Score
-
+    | FinishedGame _ -> failwith "Game still should be open!"
+    | OpenGame game -> game.Score
   let sndSetScore = newScore.[1] |> List.groupBy (fun score -> score.By |> snd) |> Map.ofList
   sndSetScore.[Yellow].Length |> should equal 10
   sndSetScore.[Black].Length |> should equal 9
