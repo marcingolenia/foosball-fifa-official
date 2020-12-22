@@ -6,7 +6,7 @@ Backlog
 4. ~~Winning next sets~~
 5. ~~Finishing the game~~
 6. ~~Changing colors (sides)~~
-7. Giraffe HttpHandler, Clean Giraffe stuff from the template
+7. ~~Giraffe HttpHandler, Clean Giraffe stuff from the template~~
 8. Settings file with rules
 9. Postgres - docker
 10. Migrations or at least script to setup db

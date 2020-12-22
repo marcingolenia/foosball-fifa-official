@@ -13,6 +13,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Include="Views.fs" />
+    <Compile Include="HttpHandler.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
 
