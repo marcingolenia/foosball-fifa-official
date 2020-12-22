@@ -7,11 +7,14 @@ module An_open_game =
   let ``An open game`` =
     { Id = 100 |> GameId
       Rules = { MaxSetPoints = 10uy; MaxSets = 2uy }
-      StartedAt = DateTime.Now
+      StartedAt = DateTime.UtcNow
       Score = [ [] ] }
 
   let ``set rule saying that set points limit is`` maxSetPoints game: OpenGame =
     { game with Rules = { game.Rules with MaxSetPoints = maxSetPoints } }
+
+  let ``with id set to`` gameId game : OpenGame =
+    { game with Id = gameId }
 
   let ``set rule saying that won sets limit is`` maxWonSets game: OpenGame =
     { game with Rules = { game.Rules with MaxSets = maxWonSets } }

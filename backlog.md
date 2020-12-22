@@ -9,8 +9,8 @@ Backlog
 7. ~~Giraffe HttpHandler, Clean Giraffe stuff from the template~~
 8. ~~Settings file with rules~~
 9. ~~Postgres - docker~~
-10. Migrations or at least script to setup db
-11. Saving things to database
+10. ~~Migrations or at least script to setup db~~
+11. ~~Saving things to database~~
 12. Composing dependencies
 13. VsCode - REST Client so others can play easily :)
 13. Hateoas (restful api ... yeah... Cybervadis you pranksters! :S)
