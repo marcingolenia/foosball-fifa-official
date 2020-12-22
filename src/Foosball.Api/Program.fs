@@ -1,5 +1,7 @@
 namespace Foosball.Api
 
+open Microsoft.Extensions.Configuration
+
 module App =
 
   open System
@@ -10,6 +12,7 @@ module App =
   open Microsoft.Extensions.Logging
   open Microsoft.Extensions.DependencyInjection
   open Giraffe
+  open Settings
 
   let errorHandler (ex: Exception) (logger: ILogger) =
     logger.LogError(ex, "An unhandled exception has occurred while executing the request.")
@@ -17,6 +20,7 @@ module App =
 
   let configureApp (app: IApplicationBuilder) =
     let env = app.ApplicationServices.GetService<IWebHostEnvironment>()
+
     (match env.EnvironmentName with
      | "Development" -> app.UseDeveloperExceptionPage()
      | _ -> app.UseGiraffeErrorHandler(errorHandler))
@@ -24,19 +28,27 @@ module App =
       .UseStaticFiles()
       .UseGiraffe(HttpHandler.router)
 
-  let configureServices (services: IServiceCollection) =
-    services.AddGiraffe() |> ignore
+  let configureServices (services: IServiceCollection) = services.AddGiraffe() |> ignore
 
   let configureLogging (builder: ILoggingBuilder) =
     builder
       .AddFilter(fun l -> l.Equals LogLevel.Error)
       .AddConsole()
-      .AddDebug() |> ignore
+      .AddDebug()
+    |> ignore
+
+  let configureSettings (configurationBuilder: IConfigurationBuilder) =
+    configurationBuilder
+      .SetBasePath(AppContext.BaseDirectory)
+      .AddJsonFile("appsettings.json", false)
 
   [<EntryPoint>]
   let main args =
     let contentRoot = Directory.GetCurrentDirectory()
     let webRoot = Path.Combine(contentRoot, "WebRoot")
+    let confBuilder = ConfigurationBuilder() |> configureSettings
+    let settings = (confBuilder.Build().Get<Settings>())
+
     Host
       .CreateDefaultBuilder(args)
       .ConfigureWebHostDefaults(fun webHostBuilder ->
@@ -49,4 +61,5 @@ module App =
         |> ignore)
       .Build()
       .Run()
+
     0
