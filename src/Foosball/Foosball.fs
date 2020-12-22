@@ -3,12 +3,10 @@
 open System
 
 type GameId = bigint
-
-type Footballers = | Yellow | Black // Official championship's colors
-type Rules = { PointsInSet: byte; SetsToWinToBeWinner: byte }
-type TeamName = TeamName of string
-type Team = TeamName * Footballers
-type Score = { By: Team; At: DateTime }
+type Rules = { MaxSetPoints: byte; MaxSets: byte }
+type TeamColor = Yellow | Black // Official championship's colors
+type TeamId = TeamId of string
+type Score = { By: TeamId * TeamColor; At: DateTime }
 type SetScores = { Number: byte; Scores: Score list }
 type OpenGame = { Id: GameId; StartedAt: DateTime; Rules: Rules; Score: Score list list }
 
@@ -23,5 +21,36 @@ type Game =
   | Open of OpenGame
   | Finished of FinishedGame
 
-type addPoint = OpenGame -> Team -> DateTime -> Game
 let openGame rules startedAt gameId = { Id = gameId; StartedAt = startedAt; Rules = rules; Score = [ [] ] }
+
+let private findSetWinner scoringTeam maxSetPoints setScore =
+    let isBlackToWin = setScore |> List.choose(fun score -> score.By |> snd |> function | Yellow _ -> Some 1 | _ -> None)
+                                |> List.length = maxSetPoints - 1
+    let isYellowToWin = setScore |> List.choose(fun score -> score.By |> snd |> function | Black _ -> Some 1 | _ -> None )
+                                 |> List.length = maxSetPoints - 1
+    match scoringTeam |> snd with
+    | Yellow _ when isYellowToWin -> Some Yellow
+    | Black _ when isBlackToWin -> Some Black
+    | _ -> None
+
+let (|SetWon|GameWon|SetInPlay|) (rules, score, scoringTeam) =
+    let setWinningTeam = score |> List.last |> findSetWinner scoringTeam (int rules.MaxSetPoints)
+    let isSetFinal = score.Length = int rules.MaxSets
+    match (setWinningTeam, isSetFinal) with
+    | (Some _, true) -> GameWon
+    | (Some _, false) -> SetWon
+    | _ -> SetInPlay
+
+let recordScore (game: OpenGame) (scoringTeam: TeamId * TeamColor) scoredAt: Game =
+    match (game.Rules, game.Score, scoringTeam) with
+    // need to fix heads
+    | SetInPlay -> { game with Score = [ game.Score.Head @ [{ By = scoringTeam; At = scoredAt }] ] } |> Game.Open
+    | SetWon -> { game with Score = [ game.Score.Head @ [{ By = scoringTeam; At = scoredAt }] ] @ [[]] } |> Game.Open
+    | GameWon -> {
+                     Id = game.Id
+                     StartedAt = game.StartedAt
+                     Rules = game.Rules
+                     FinishedAt = scoredAt
+                     Score = [game.Score.Head @ [{ By = scoringTeam; At = scoredAt }]]
+                 } |> Game.Finished
+
