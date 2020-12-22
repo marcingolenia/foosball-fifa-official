@@ -16,20 +16,14 @@ module An_open_game =
   let ``set rule saying that won sets limit is`` maxWonSets game: OpenGame =
     { game with Rules = { game.Rules with MaxSets = maxWonSets } }
 
-  let ``add points for yellow's in 1st set`` points game: OpenGame =
-      { game with
-            Score =
-                [ game.Score.Head
-                  @ ([ 1 .. points ]
-                     |> List.map (fun _ ->
-                         { By = ( TeamId "Yellow", Yellow)
-                           At = DateTime.UtcNow })) ] }
+  let ``add points in current set`` points team (game: OpenGame): OpenGame =
+      let currentSet = (game.Score |> List.last) @
+                       [ for _ in 1 .. points -> { By = team; At = DateTime.UtcNow } ]
+      match game.Score with
+      | [] | [_] -> { game with Score = [currentSet] }
+      | _ -> let previousSets = game.Score.[ 0 .. game.Score.Length - 2]
+             { game with Score = previousSets @ [currentSet] }
 
-  let ``add points for black's in 1st set`` points game: OpenGame =
-      { game with
-            Score =
-                [ game.Score.Head
-                  @ ([ 1 .. points ]
-                     |> List.map (fun _ ->
-                         { By = (TeamId "Black", Black)
-                           At = DateTime.UtcNow })) ] }
+  let ``prepend set won by`` team (game: OpenGame): OpenGame =
+      let wonSet = [ for _ in 1 .. int game.Rules.MaxSetPoints -> { By = team; At = DateTime.UtcNow } ]
+      { game with Score = [ wonSet ] @ game.Score }

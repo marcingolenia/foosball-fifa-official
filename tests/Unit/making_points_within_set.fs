@@ -42,9 +42,8 @@ let ``GIVEN open game with 2:2 score WHEN recordScore for black's team THEN the 
   let blackTeam = (TeamId "Destroyers", Black)
   let scoredAt = DateTime.UtcNow
   let gameBeforeScore =
-    ``An open game``
-    |> ``add points for black's in 1st set`` 2
-    |> ``add points for yellow's in 1st set`` 2
+    ``An open game`` |> ``add points in current set`` 2 blackTeam
+                     |> ``add points in current set`` 2 (TeamId "Marcin & Piotr", Yellow)
   // Act
   let gameAfterScore = recordScore gameBeforeScore blackTeam scoredAt
   // Assert
@@ -62,9 +61,8 @@ let ``GIVEN open game with 2:2 score WHEN recordScore for yellow's team THEN the
   let yellowTeam = (TeamId "Marcin & Piotr", Yellow)
   let scoredAt = DateTime.UtcNow
   let gameBeforeScore =
-    ``An open game``
-    |> ``add points for black's in 1st set`` 2
-    |> ``add points for yellow's in 1st set`` 2
+    ``An open game`` |> ``add points in current set`` 2 yellowTeam
+                     |> ``add points in current set`` 2 (TeamId "Destroyers", Black)
   // Act
   let gameAfterScore = recordScore gameBeforeScore yellowTeam scoredAt
   // Assert

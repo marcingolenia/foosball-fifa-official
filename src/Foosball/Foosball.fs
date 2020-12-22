@@ -21,8 +21,6 @@ type Game =
   | Open of OpenGame
   | Finished of FinishedGame
 
-let openGame rules startedAt gameId = { Id = gameId; StartedAt = startedAt; Rules = rules; Score = [ [] ] }
-
 let private findSetWinner scoringTeam maxSetPoints setScore =
     let isBlackToWin = setScore |> List.choose(fun score -> score.By |> snd |> function | Yellow _ -> Some 1 | _ -> None)
                                 |> List.length = maxSetPoints - 1
@@ -42,10 +40,11 @@ let (|SetWon|GameWon|SetInPlay|) (rules, score, scoringTeam) =
     | _ -> SetInPlay
 
 let recordScore (game: OpenGame) (scoringTeam: TeamId * TeamColor) scoredAt: Game =
+    let finishedSets = game.Score.[.. game.Score.Length - 2]
+    let currentSetWithNewPoint = [(game.Score |> List.last) @ [{ By = scoringTeam; At = scoredAt }]]
     match (game.Rules, game.Score, scoringTeam) with
-    // need to fix heads
-    | SetInPlay -> { game with Score = [ game.Score.Head @ [{ By = scoringTeam; At = scoredAt }] ] } |> Game.Open
-    | SetWon -> { game with Score = [ game.Score.Head @ [{ By = scoringTeam; At = scoredAt }] ] @ [[]] } |> Game.Open
+    | SetInPlay -> { game with Score = finishedSets @ currentSetWithNewPoint } |> Game.Open
+    | SetWon -> { game with Score = finishedSets @ currentSetWithNewPoint @ [[]] } |> Game.Open
     | GameWon -> {
                      Id = game.Id
                      StartedAt = game.StartedAt
@@ -54,3 +53,4 @@ let recordScore (game: OpenGame) (scoringTeam: TeamId * TeamColor) scoredAt: Gam
                      Score = [game.Score.Head @ [{ By = scoringTeam; At = scoredAt }]]
                  } |> Game.Finished
 
+let openGame rules startedAt gameId = { Id = gameId; StartedAt = startedAt; Rules = rules; Score = [ [] ] }
