@@ -1,37 +1,27 @@
-﻿module Foosball1
+﻿module Foosball
 
 open System
 
 type GameId = bigint
-type Footballers = | Yellow | Black // Official championship's colors
-type Rules =
-    { PointsInSet: byte
-      SetsToWinToBeWinner: byte }
 
+type Footballers = | Yellow | Black // Official championship's colors
+type Rules = { PointsInSet: byte; SetsToWinToBeWinner: byte }
 type TeamName = TeamName of string
 type Team = TeamName * Footballers
 type Score = { By: Team; At: DateTime }
 type SetScores = { Number: byte; Scores: Score list }
-
-type OpenGame =
-    { Id: GameId
-      Teams: Team * Team
-      StartedAt: DateTime
-      Rules: Rules
-      Score: SetScores list }
+type OpenGame = { Id: GameId; StartedAt: DateTime; Rules: Rules; Score: Score list list }
 
 type FinishedGame =
-    { Id: GameId
-      Teams: Team * Team
-      StartedAt: DateTime
-      FinishedAt: DateTime
-      Rules: Rules
-      Score: SetScores list }
+  { Id: GameId
+    StartedAt: DateTime
+    FinishedAt: DateTime
+    Rules: Rules
+    Score: Score list list }
 
 type Game =
-    | Open of OpenGame
-    | Finished of FinishedGame
+  | Open of OpenGame
+  | Finished of FinishedGame
 
 type addPoint = OpenGame -> Team -> DateTime -> Game
-type openGame = Team * Team -> DateTime -> GameId -> OpenGame
-
+let openGame rules startedAt gameId = { Id = gameId; StartedAt = startedAt; Rules = rules; Score = [ [] ] }
