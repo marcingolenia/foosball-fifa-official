@@ -8,10 +8,15 @@ type TeamColor = Yellow | Black // Official championship's colors
 type TeamId = TeamId of string
 type Score = { By: TeamId * TeamColor; At: DateTime }
 type SetScores = { Number: byte; Scores: Score list }
-type OpenGame = { Id: GameId; StartedAt: DateTime; Rules: Rules; Score: Score list list }
-
+type OpenGame =
+  { Id: GameId
+    Teams: TeamId * TeamId
+    StartedAt: DateTime
+    Rules: Rules
+    Score: Score list list }
 type FinishedGame =
   { Id: GameId
+    Teams: TeamId * TeamId
     StartedAt: DateTime
     FinishedAt: DateTime
     Rules: Rules
@@ -47,8 +52,16 @@ let recordScore (game: OpenGame) (scoringTeam: TeamId * TeamColor) scoredAt: Gam
                      Id = game.Id
                      StartedAt = game.StartedAt
                      Rules = game.Rules
+                     Teams = game.Teams
                      FinishedAt = scoredAt
                      Score = finishedSets @ currentSetWithNewPoint
                  } |> Game.FinishedGame
 
-let openGame rules startedAt gameId = { Id = gameId; StartedAt = startedAt; Rules = rules; Score = [ [] ] }
+let openGame rules teams startedAt gameId =
+  match teams with
+  | (t1, t2) when t1 = t2 -> Error "Team names must be unique."
+  | _ -> { Id = gameId
+           StartedAt = startedAt
+           Teams = teams
+           Rules = rules
+           Score = [ [] ] } |> Ok

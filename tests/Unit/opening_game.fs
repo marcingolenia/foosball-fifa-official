@@ -11,10 +11,12 @@ let ``GIVEN rules, startDate and gameId WHEN game is opened THEN the scores list
   let startDate = DateTime.Now
   let rules = { MaxSetPoints = 10uy; MaxSets = 2uy }
   let gameId = 100 |> GameId
+  let teams = (TeamId "1", TeamId "2")
   // Act
-  let game = openGame rules startDate gameId
+  let game = openGame rules teams startDate gameId |> function | Ok game -> game | Error error -> failwith error
   // Assert
   game.Score |> should haveLength 1
   game.Id |> should equal gameId
   game.Rules |> should equal game.Rules
   game.StartedAt |> should equal startDate
+  game.Teams |> should equal teams

@@ -6,6 +6,7 @@
 
     <ItemGroup>
         <Compile Include="Workflows.fs" />
+        <Compile Include="Queries.fs" />
     </ItemGroup>
 
     <ItemGroup>

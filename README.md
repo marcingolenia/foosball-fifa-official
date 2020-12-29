@@ -1,3 +1,8 @@
+# Instructions
+* You will need [.NET 5.0](https://dotnet.microsoft.com/download/dotnet/5.0) to build, test, run the app.
+* Use `docker-compose up -d` to setup postgres database for development/testing purposes.
+* See [foosball.http file](./foosball.http) and VsCode [RestClient](https://marketplace.visualstudio.com/items?itemName=humao.rest-client) for easy api usage.
+
 # Context:
 * Many of us are avid foosball players, but running around the office to check what is the status of the game is both tiring and wastes lots of our precious time. Therefore, we would appreciate a bit of help.
 

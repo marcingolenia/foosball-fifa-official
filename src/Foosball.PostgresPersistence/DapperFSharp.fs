@@ -3,6 +3,7 @@
 open System.Data
 open Dapper
 open Npgsql
+open PostgresPersistence
 
 module DapperFSharp =
 
@@ -22,12 +23,21 @@ module DapperFSharp =
       return result
     }
 
+  let sqlQuery<'Result> (query: string) (connection: IDbConnection): Async<'Result seq> =
+    connection.QueryAsync<'Result>(query)
+    |> Async.AwaitTask
+
+  let sqlQueryMultiple (query: string) (param: obj) (connection: IDbConnection): Async<SqlMapper.GridReader> =
+    connection.QueryMultipleAsync(query, param)
+    |> Async.AwaitTask
+
   let sqlExecute (sql: string) (param: obj) (connection: IDbConnection) =
     connection.ExecuteAsync(sql, param)
     |> Async.AwaitTask
     |> Async.Ignore
 
   let createSqlConnection (connectionString: string): unit -> Async<IDbConnection> =
+    OptionHandler.RegisterTypes()
     fun () -> async {
       let connection = new NpgsqlConnection(connectionString)
       if connection.State <> ConnectionState.Open

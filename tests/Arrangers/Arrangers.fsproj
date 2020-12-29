@@ -6,6 +6,7 @@
 
     <ItemGroup>
         <Compile Include="An_open_game.fs" />
+        <Compile Include="A_finished_game.fs" />
     </ItemGroup>
 
     <ItemGroup>

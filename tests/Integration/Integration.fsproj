@@ -5,7 +5,9 @@
         <GenerateProgramFile>false</GenerateProgramFile>
     </PropertyGroup>
     <ItemGroup>
+        <Compile Include="db_connection.fs" />
         <Compile Include="game_reading_inserting_updating.fs" />
+        <Compile Include="game_queries.fs" />
         <Compile Include="Program.fs" />
     </ItemGroup>
     <ItemGroup>
@@ -24,6 +26,6 @@
     <ItemGroup>
       <ProjectReference Include="..\..\src\Foosball.PostgresPersistence\Foosball.PostgresPersistence.fsproj" />
       <ProjectReference Include="..\Arrangers\Arrangers.fsproj" />
-      <ProjectReference Include="..\Toolbox\Toolbox.fsproj" />
+      <ProjectReference Include="..\_Toolbox\_Toolbox.fsproj" />
     </ItemGroup>
 </Project>

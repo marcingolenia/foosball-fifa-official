@@ -7,13 +7,8 @@
   <ItemGroup>
     <PackageReference Include="Giraffe" Version="5.0.0-rc-1" />
     <PackageReference Include="Giraffe.ViewEngine" Version="1.3.*" />
+    <PackageReference Include="IdGen" Version="3.0.0" />
     <PackageReference Include="TaskBuilder.fs" Version="2.1.*" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Settings.fs" />
-    <Compile Include="Views.fs" />
-    <Compile Include="HttpHandler.fs" />
-    <Compile Include="Program.fs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="appsettings.json">
@@ -23,5 +18,19 @@
     <Content Include="WebRoot\**\*">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="IdGenerator.fs" />
+    <Compile Include="Settings.fs" />
+    <Compile Include="CompositionRoot\Trunk.fs" />
+    <Compile Include="CompositionRoot\Root.fs" />
+    <Compile Include="Views.fs" />
+    <Compile Include="Dtos.fs" />
+    <Compile Include="HttpHandler.fs" />
+    <Compile Include="Program.fs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Foosball.Application\Foosball.Application.fsproj" />
+    <ProjectReference Include="..\Foosball.PostgresPersistence\Foosball.PostgresPersistence.fsproj" />
   </ItemGroup>
 </Project>

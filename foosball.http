@@ -1,0 +1,38 @@
+# Install REST Client to easily fire http requests
+@baseUrl = https://localhost:5001
+
+### Start new game 
+# @name newGame
+POST {{baseUrl}}/games HTTP/1.1
+content-type: application/json
+
+{
+    "Team1": "Team C",
+    "Team2": "Team D"
+}
+
+@gameId = {{newGame.response.headers.Location}}
+
+### Read game details
+
+GET {{baseUrl}}{{gameId}} HTTP/1.1
+
+### Post new score for yellows
+POST {{baseUrl}}{{gameId}}/scores HTTP/1.1
+
+{
+    "Color": "yellow",
+    "Team": "Team B"
+}
+
+
+### Post new score for blacks
+POST {{baseUrl}}{{gameId}}/scores HTTP/1.1
+
+{
+    "Color": "black",
+    "Team": "Team A"
+}
+
+### List all games in descending order by started date
+GET {{baseUrl}}/games HTTP/1.1

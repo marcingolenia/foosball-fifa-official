@@ -7,6 +7,7 @@ module An_open_game =
   let ``An open game`` =
     { Id = 100 |> GameId
       Rules = { MaxSetPoints = 10uy; MaxSets = 2uy }
+      Teams = ("1" |> TeamId, "2" |> TeamId)
       StartedAt = DateTime.UtcNow
       Score = [ [] ] }
 
@@ -16,8 +17,14 @@ module An_open_game =
   let ``with id set to`` gameId game : OpenGame =
     { game with Id = gameId }
 
+  let ``with teams`` teams game : OpenGame =
+    { game with Teams = teams }
+
   let ``set rule saying that won sets limit is`` maxWonSets game: OpenGame =
     { game with Rules = { game.Rules with MaxSets = maxWonSets } }
+
+  let ``with StartedAt`` startedAt game : OpenGame =
+    { game with StartedAt = startedAt }
 
   let ``add points in current set`` points team (game: OpenGame): OpenGame =
       let currentSet = (game.Score |> List.last) @

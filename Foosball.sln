@@ -24,9 +24,11 @@ Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Foosball.PostgresPersistenc
 EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Integration", "tests\Integration\Integration.fsproj", "{152EE534-0D6A-4C9A-872C-E8AA532FCB2F}"
 EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Toolbox", "tests\Toolbox\Toolbox.fsproj", "{6F0D2344-A724-4675-92AD-74C585228972}"
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "_Toolbox", "tests\_Toolbox\_Toolbox.fsproj", "{6F0D2344-A724-4675-92AD-74C585228972}"
 EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Foosball.Application", "src\Foosball.Application\Foosball.Application.fsproj", "{A47D3E68-E67F-48C3-A906-DF00F34E8FD3}"
+EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Acceptance", "tests\Acceptance\Acceptance.fsproj", "{CEF9518D-E99B-44A5-A2ED-A6B9D81A51D9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -66,6 +68,10 @@ Global
 		{A47D3E68-E67F-48C3-A906-DF00F34E8FD3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A47D3E68-E67F-48C3-A906-DF00F34E8FD3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A47D3E68-E67F-48C3-A906-DF00F34E8FD3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CEF9518D-E99B-44A5-A2ED-A6B9D81A51D9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CEF9518D-E99B-44A5-A2ED-A6B9D81A51D9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CEF9518D-E99B-44A5-A2ED-A6B9D81A51D9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CEF9518D-E99B-44A5-A2ED-A6B9D81A51D9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{A1AE49C0-BDFD-4325-9C71-FFE91077ED38} = {F7B22023-7224-4592-A5AA-965F76001A04}
@@ -77,5 +83,6 @@ Global
 		{152EE534-0D6A-4C9A-872C-E8AA532FCB2F} = {4D31E6B2-186B-4E86-8B16-66A96E6E8AC8}
 		{6F0D2344-A724-4675-92AD-74C585228972} = {4D31E6B2-186B-4E86-8B16-66A96E6E8AC8}
 		{A47D3E68-E67F-48C3-A906-DF00F34E8FD3} = {F7B22023-7224-4592-A5AA-965F76001A04}
+		{CEF9518D-E99B-44A5-A2ED-A6B9D81A51D9} = {4D31E6B2-186B-4E86-8B16-66A96E6E8AC8}
 	EndGlobalSection
 EndGlobal

@@ -1,4 +1,4 @@
-module Tests
+module game_reading_inserting_updating
 
 open Foosball
 open Foosball.PostgresPersistence.GameDao
@@ -14,9 +14,9 @@ let ``GIVEN open game WHEN inserted THEN after read it is fully restored`` () =
     let expectedGame = ``An open game`` |> ``with id set to`` id  |> Game.OpenGame
     asyncResult {
         // Act
-        do! insert Toolbox.createSqlConnection expectedGame
+        do! insert DbConnection.create expectedGame
         // Assert
-        let! actualGame = readBy Toolbox.createSqlConnection id
+        let! actualGame = readBy DbConnection.create id
         actualGame |> should equal expectedGame
     } |> Async.RunSynchronously
 
@@ -27,13 +27,13 @@ let ``GIVEN open game WHEN updated THEN after read it is has the updates`` () =
     let gameToUpdate = ``An open game`` |> ``with id set to`` id  |> Game.OpenGame
     asyncResult {
         // Act
-        do! insert Toolbox.createSqlConnection gameToUpdate
+        do! insert DbConnection.create gameToUpdate
         let expectedGame = ``An open game``
                            |> ``with id set to`` id
                            |> ``prepend set won by`` (TeamId "Szakalaka", Yellow) |> Game.OpenGame
-        do! update Toolbox.createSqlConnection expectedGame
+        do! update DbConnection.create expectedGame
         // Assert
-        let! actualGame = readBy Toolbox.createSqlConnection id
+        let! actualGame = readBy DbConnection.create id
         actualGame |> should not' (be gameToUpdate)
         actualGame |> should equal expectedGame
     } |> Async.RunSynchronously

@@ -1,13 +1,16 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <TargetFramework>net5.0</TargetFramework>
+        <RootNamespace>Toolbox</RootNamespace>
     </PropertyGroup>
     <ItemGroup>
-        <PackageReference Include="Npgsql" Version="5.0.0" />
-        <PackageReference Include="System.Data.SqlClient" Version="4.8.1" />
         <PackageReference Include="IdGen" Version="3.0.0" />
+        <PackageReference Include="FakeItEasy" Version="6.2.1" />
+        <PackageReference Include="Giraffe" Version="5.0.0-rc-1" />
+        <PackageReference Include="Microsoft.FSharpLu.Json" Version="0.11.6" />
     </ItemGroup>
     <ItemGroup>
         <Compile Include="Toolbox.fs" />
+        <Compile Include="HttpContext.fs" />
     </ItemGroup>
 </Project>

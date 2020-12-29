@@ -4,4 +4,7 @@ module Settings
 type FoosballRules = { MaxSetPoints: byte; MaxSets: byte }
 
 [<CLIMutable>]
-type Settings = { FoosballRules: FoosballRules; SqlConnectionString: string }
+type Settings =
+  { FoosballRules: FoosballRules
+    SqlConnectionString: string
+    IdGeneratorSettings: IdGenerator.Settings }

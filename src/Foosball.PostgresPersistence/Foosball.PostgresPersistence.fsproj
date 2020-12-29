@@ -11,10 +11,14 @@
         <PackageReference Include="Thoth.Json.Net" Version="5.0.0" />
     </ItemGroup>
     <ItemGroup>
+        <Compile Include="OptionHandler.fs" />
         <Compile Include="DapperFSharp.fs" />
+        <Compile Include="DbModels.fs" />
+        <Compile Include="GameQueriesDao.fs" />
         <Compile Include="GameDao.fs" />
     </ItemGroup>
     <ItemGroup>
+      <ProjectReference Include="..\Foosball.Application\Foosball.Application.fsproj" />
       <ProjectReference Include="..\Foosball\Foosball.fsproj" />
     </ItemGroup>
 </Project>

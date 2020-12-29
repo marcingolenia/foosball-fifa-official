@@ -11,6 +11,7 @@ module App =
   open Microsoft.Extensions.Hosting
   open Microsoft.Extensions.Logging
   open Microsoft.Extensions.DependencyInjection
+  open Foosball.Api.CompositionRoot
   open Giraffe
   open Settings
 
@@ -18,7 +19,8 @@ module App =
     logger.LogError(ex, "An unhandled exception has occurred while executing the request.")
     clearResponse >=> setStatusCode 500 >=> text ex.Message
 
-  let configureApp (app: IApplicationBuilder) =
+  let configureApp root
+                   (app: IApplicationBuilder) =
     let env = app.ApplicationServices.GetService<IWebHostEnvironment>()
 
     (match env.EnvironmentName with
@@ -26,13 +28,13 @@ module App =
      | _ -> app.UseGiraffeErrorHandler(errorHandler))
       .UseHttpsRedirection()
       .UseStaticFiles()
-      .UseGiraffe(HttpHandler.router)
+      .UseGiraffe(HttpHandler.router root)
 
   let configureServices (services: IServiceCollection) = services.AddGiraffe() |> ignore
 
   let configureLogging (builder: ILoggingBuilder) =
     builder
-      .AddFilter(fun l -> l.Equals LogLevel.Error)
+      .AddFilter(fun l -> l.Equals LogLevel.Information)
       .AddConsole()
       .AddDebug()
     |> ignore
@@ -47,19 +49,17 @@ module App =
     let contentRoot = Directory.GetCurrentDirectory()
     let webRoot = Path.Combine(contentRoot, "WebRoot")
     let confBuilder = ConfigurationBuilder() |> configureSettings
-    let settings = (confBuilder.Build().Get<Settings>())
-
+    let root = (confBuilder.Build().Get<Settings>()) |> Trunk.compose |> Root.compose
     Host
       .CreateDefaultBuilder(args)
       .ConfigureWebHostDefaults(fun webHostBuilder ->
         webHostBuilder
           .UseContentRoot(contentRoot)
           .UseWebRoot(webRoot)
-          .Configure(Action<IApplicationBuilder> configureApp)
+          .Configure(Action<IApplicationBuilder> (configureApp root))
           .ConfigureServices(configureServices)
           .ConfigureLogging(configureLogging)
         |> ignore)
       .Build()
       .Run()
-
     0
