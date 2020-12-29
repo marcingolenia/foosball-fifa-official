@@ -17,8 +17,8 @@ jobs:
     - name: Restore dependencies
       run: dotnet restore
     - name: Build
-      run: dotnet build --no-restore --logger:"console;noprogress=true"
+      run: dotnet build --no-restore
     - name: Docker Compose Action
       uses: isbang/compose-action@v0.1.1
     - name: Test
-      run: dotnet test --no-build
+      run: dotnet test --no-build --logger:"console;noprogress=true"
