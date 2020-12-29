@@ -21,4 +21,4 @@ jobs:
     - name: Docker Compose Action
       uses: isbang/compose-action@v0.1.1
     - name: Test
-      run: dotnet test --no-build --logger:"console;noprogress=true"
+      run: dotnet test --no-build /m:1 #https://github.com/microsoft/vstest/issues/2282
