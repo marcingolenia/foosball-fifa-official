@@ -1,7 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <TargetFramework>net5.0</TargetFramework>
-        <RootNamespace>Toolbox</RootNamespace>
     </PropertyGroup>
     <ItemGroup>
         <PackageReference Include="IdGen" Version="3.0.0" />
