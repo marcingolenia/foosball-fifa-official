@@ -28,5 +28,4 @@
       <ProjectReference Include="..\..\src\Foosball\Foosball.fsproj" />
       <ProjectReference Include="..\Arrangers\Arrangers.fsproj" />
     </ItemGroup>
-
 </Project>
