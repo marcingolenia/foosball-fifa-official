@@ -22,3 +22,4 @@ jobs:
       uses: isbang/compose-action@v0.1.1
     - name: Test
       run: dotnet test /m:1
+
