@@ -4,7 +4,6 @@ open System
 open Foosball
 open Foosball.Game
 open FsToolkit.ErrorHandling
-open FsToolkit.ErrorHandling.Operator.Result
 
 module OpenGameFlow =
   let toErrorMessage msg = Result.mapError(fun _ -> msg)
