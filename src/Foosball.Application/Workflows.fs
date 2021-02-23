@@ -35,7 +35,6 @@ module OpenGameFlow =
     }
 
 module ScoreFlow =
-  let toErrorMessages msg = AsyncResult.mapError(fun _ -> [msg])
   let score (readBy: GameId -> Async<Game>)
             (save: Game -> Async<Unit>)
             (id: int64)
