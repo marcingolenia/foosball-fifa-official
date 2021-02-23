@@ -1,6 +1,6 @@
 ﻿namespace Foosball.PostgresPersistence
 
-open Foosball
+open Foosball.Game
 open DapperFSharp
 open Thoth.Json.Net
 

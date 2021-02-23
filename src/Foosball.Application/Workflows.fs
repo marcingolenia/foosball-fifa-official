@@ -2,6 +2,7 @@
 
 open System
 open Foosball
+open Foosball.Game
 open FsToolkit.ErrorHandling
 
 module OpenGameFlow =
@@ -12,18 +13,14 @@ module OpenGameFlow =
                team1
                team2
                =
-      let (team1, team2) =
-        match (team1, team2) with
-        | (null, null) -> ("", "")
-        | (null, _) -> ("", team2)
-        | (_, null) -> (team1, "")
-        | _ -> (team1, team2)
       asyncResult {
+          let! team1 = NotEmptyString.create team1
+          let! team2 = NotEmptyString.create team2
           let! openedGame = openGame { MaxSets = maxSets; MaxSetPoints = maxSetPoints }
-                                    (team1 |> TeamId, team2 |> TeamId)
+                                    (team1, team2)
                                     DateTime.UtcNow
                                     (id |> GameId)
-          return! save (openedGame |> Game.OpenGame)
+          return! save (openedGame |> OpenGame)
       }
 
 module ScoreFlow =
@@ -36,6 +33,7 @@ module ScoreFlow =
     let id = id |> GameId
     let footballersColor = (if footballersColor = null then "" else footballersColor).ToLowerInvariant()
     asyncResult {
+      let! scoringTeam = teamId |> NotEmptyString.create
       let! footballersColor =
         match footballersColor with
         | "yellow" -> Ok Yellow
@@ -44,7 +42,7 @@ module ScoreFlow =
       let! game = readBy id
       let! scoreResult =
         match game with
-        | OpenGame game -> Ok (recordScore game (TeamId teamId, footballersColor) DateTime.UtcNow)
+        | OpenGame game -> Ok (recordScore game (scoringTeam, footballersColor) DateTime.UtcNow)
         | FinishedGame _ -> Error "Cannot make a score in finished game."
       do! save scoreResult
     }

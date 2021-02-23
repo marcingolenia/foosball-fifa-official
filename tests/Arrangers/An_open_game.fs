@@ -2,12 +2,16 @@
 
 open System
 open Foosball
+open Foosball.Game
+open A_team
 
 module An_open_game =
   let ``An open game`` =
+    let team1 = ``A team`` Yellow
+    let team2 = ``A team`` Black
     { Id = 100 |> GameId
       Rules = { MaxSetPoints = 10uy; MaxSets = 2uy }
-      Teams = ("1" |> TeamId, "2" |> TeamId)
+      Teams = (team1 |> fst, team2 |> fst)
       StartedAt = DateTime.UtcNow
       Score = [ [] ] }
 

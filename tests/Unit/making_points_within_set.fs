@@ -1,15 +1,18 @@
 module making_points_within_set
 
 open System
+open Arrangers.A_team
 open Arrangers.An_open_game
 open FsUnit.Xunit
+open Foosball.Game
 open Foosball
 open Xunit
+
 
 [<Fact>]
 let ``GIVEN freshly opened game WHEN recordScore for yellow's THEN scores list contains set which contains 1 point scored by yellow team`` () =
   // Arrange
-  let yellowTeam = (TeamId "Marcin & Piotr", Yellow)
+  let yellowTeam = ``A team`` Yellow
   let scoredAt = DateTime.UtcNow
   // Act
   let game = recordScore ``An open game`` yellowTeam scoredAt
@@ -24,7 +27,7 @@ let ``GIVEN freshly opened game WHEN recordScore for yellow's THEN scores list c
 [<Fact>]
 let ``GIVEN freshly opened game WHEN recordScore for black's THEN scores list contains set which contains 1 point scored by black team`` () =
   // Arrange
-  let blackTeam = (TeamId "Destroyers", Black)
+  let blackTeam = ``A team`` Black
   let scoredAt = DateTime.UtcNow
   // Act
   let game = recordScore ``An open game`` blackTeam scoredAt
@@ -39,11 +42,11 @@ let ``GIVEN freshly opened game WHEN recordScore for black's THEN scores list co
 [<Fact>]
 let ``GIVEN open game with 2:2 score WHEN recordScore for black's team THEN the resulting game score is 3:2  - black's team leads`` () =
   // Arrange
-  let blackTeam = (TeamId "Destroyers", Black)
+  let blackTeam = ``A team`` Black
   let scoredAt = DateTime.UtcNow
   let gameBeforeScore =
     ``An open game`` |> ``add points in current set`` 2 blackTeam
-                     |> ``add points in current set`` 2 (TeamId "Marcin & Piotr", Yellow)
+                     |> ``add points in current set`` 2 (``A team`` Yellow)
   // Act
   let gameAfterScore = recordScore gameBeforeScore blackTeam scoredAt
   // Assert
@@ -58,11 +61,11 @@ let ``GIVEN open game with 2:2 score WHEN recordScore for black's team THEN the 
 [<Fact>]
 let ``GIVEN open game with 2:2 score WHEN recordScore for yellow's team THEN the resulting game score is 2:3  - yellow's team leads`` () =
   // Arrange
-  let yellowTeam = (TeamId "Marcin & Piotr", Yellow)
+  let yellowTeam = ``A team`` Yellow
   let scoredAt = DateTime.UtcNow
   let gameBeforeScore =
     ``An open game`` |> ``add points in current set`` 2 yellowTeam
-                     |> ``add points in current set`` 2 (TeamId "Destroyers", Black)
+                     |> ``add points in current set`` 2 (``A team`` Black)
   // Act
   let gameAfterScore = recordScore gameBeforeScore yellowTeam scoredAt
   // Assert

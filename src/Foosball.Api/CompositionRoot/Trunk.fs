@@ -1,6 +1,6 @@
 namespace Foosball.Api.CompositionRoot
 
-open Foosball
+open Foosball.Game
 open Foosball.Application
 open Foosball.PostgresPersistence
 open Settings

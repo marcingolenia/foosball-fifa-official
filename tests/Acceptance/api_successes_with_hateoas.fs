@@ -2,6 +2,7 @@ module api_successes_with_hateoas
 
 open System
 open Acceptance
+open Foosball.Game
 open Foosball
 open Foosball.Api
 open Xunit
@@ -9,6 +10,7 @@ open FSharp.Control.Tasks.V2
 open TestCompositionRoot
 open HttpContext
 open Arrangers.An_open_game
+open Arrangers.A_team
 open FsUnit.Xunit
 open Foosball.Application
 
@@ -85,7 +87,8 @@ let ``GIVEN open game WHEN readGameByHandler THEN response contains score action
     task {
       // Act
       let! httpResponse = HttpHandler.readGameByHandler root.ReadGameBy game.Id next httpRequest
-      return httpResponse } |> Async.AwaitTask |> Async.RunSynchronously |> Option.get
+      return httpResponse
+      } |> Async.AwaitTask |> Async.RunSynchronously |> Option.get
   // Assert
   let linkedGame = httpResponse.Response |> deserializeResponse<LinkedResult<Queries.GameDetails>>
   linkedGame.Links |> should contain { Rel = "score"; Href = $"/games/{game.Id}/score" }
@@ -97,14 +100,14 @@ let ``GIVEN open game WHEN readGameByHandler THEN response contains score action
 let ``GIVEN open game WHEN scoreHandler THEN the game score is updated AND link to game is returned.`` () =
   // Arrange
   let gameId = int64 10
-  let (team1, team2) = ("Yellows", "Blacks")
+  let (team1, team2) = (``A team`` Yellow, ``A team`` Black)
   let mutable gameAfterUpdate: Game option = None
   let gameBeforeUpdate = ``An open game``
-                         |> ``with teams`` (TeamId team1, TeamId team2)
+                         |> ``with teams`` (team1 |> fst, team2 |> fst)
                          |> ``with id set to`` (gameId |> GameId)
-                         |> ``add points in current set`` 5 (TeamId team1, Yellow)
-  let httpRequest = buildMockHttpContext () |> writeToBody { Team = team1; Color = "Yellow" }
-  let root = testTrunk |> ``replace ReadGameBy`` (fun _ -> async { return gameBeforeUpdate |> Game.OpenGame |> Ok })
+                         |> ``add points in current set`` 5 team1
+  let httpRequest = buildMockHttpContext () |> writeToBody { Team = team1 |> fst |> NotEmptyString.value; Color = "Yellow" }
+  let root = testTrunk |> ``replace ReadGameBy`` (fun _ -> async { return gameBeforeUpdate |> OpenGame |> Ok })
                        |> ``replace UpdateGame`` (fun game -> async { gameAfterUpdate <- Some game; return () })
                        |> composeRoot
   let httpResponse =

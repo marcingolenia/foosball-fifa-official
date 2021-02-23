@@ -1,16 +1,19 @@
 module finishing_game
 
 open System
-open Foosball
+open Arrangers
+open Foosball.Game
 open Xunit
 open Arrangers.An_open_game
 open FsUnit.Xunit
+open Foosball
+open A_team
 
 [<Fact>]
 let ``GIVEN open game with 9:9 AND rule says that 10 scores is the limit AND the set is final WHEN recordScore for a team THEN the last set score is 10:9 and game is finished`` () =
   // Arrange
-  let winningTeam = (TeamId "I kill", TeamColor.Black)
-  let loosingTeam = (TeamId "Why we need to loose? :(", TeamColor.Yellow)
+  let winningTeam = ``A team`` Black
+  let loosingTeam = ``A team`` Yellow
   let scoredAt = DateTime.UtcNow
   let gameBeforeScore =
     ``An open game``
@@ -39,8 +42,8 @@ let ``GIVEN open game with 9:9 AND rule says that 10 scores is the limit AND the
 [<Fact>]
 let ``GIVEN open game with 9:9 in last set AND 2:2 in sets AND teams did change sides AND rule says that 10 scores is the limit AND the set is final WHEN recordScore for a team THEN the last set score is 10:9 and game is finished`` () =
   // Arrange
-  let team1 = TeamId "I Love"
-  let team2 = TeamId "Santa Claus"
+  let team1 = ``A team`` Black |> fst
+  let team2 = ``A team`` Yellow |> fst
   let scoredAt = DateTime.UtcNow
 
   let gameBeforeScore =
