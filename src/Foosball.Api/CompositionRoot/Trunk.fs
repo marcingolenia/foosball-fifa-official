@@ -9,7 +9,7 @@ module Trunk =
   type Trunk =
     { GamesQuery: Async<Queries.GameOverview seq>
       GameQuery: int64 -> Async<Queries.GameDetails>
-      ReadGameBy: GameId -> Async<Result<Game, string>>
+      ReadGameBy: GameId -> Async<Game>
       UpdateGame: Game -> Async<unit>
       InsertGame: Game -> Async<unit>
       GenerateId: unit -> int64

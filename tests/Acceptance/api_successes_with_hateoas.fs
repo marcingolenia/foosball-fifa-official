@@ -107,7 +107,7 @@ let ``GIVEN open game WHEN scoreHandler THEN the game score is updated AND link 
                          |> ``with id set to`` (gameId |> GameId)
                          |> ``add points in current set`` 5 team1
   let httpRequest = buildMockHttpContext () |> writeToBody { Team = team1 |> fst |> NotEmptyString.value; Color = "Yellow" }
-  let root = testTrunk |> ``replace ReadGameBy`` (fun _ -> async { return gameBeforeUpdate |> OpenGame |> Ok })
+  let root = testTrunk |> ``replace ReadGameBy`` (fun _ -> async { return gameBeforeUpdate |> OpenGame })
                        |> ``replace UpdateGame`` (fun game -> async { gameAfterUpdate <- Some game; return () })
                        |> composeRoot
   let httpResponse =

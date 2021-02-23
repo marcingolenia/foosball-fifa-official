@@ -4,6 +4,8 @@ open System
 open Foosball
 open Foosball.Game
 open FsToolkit.ErrorHandling
+open FsToolkit.ErrorHandling.Operator.AsyncResult
+open FsToolkit.ErrorHandling.Operator.Result
 
 module OpenGameFlow =
   let toErrorMessage msg = Result.mapError(fun _ -> msg)
@@ -33,7 +35,8 @@ module OpenGameFlow =
     }
 
 module ScoreFlow =
-  let score (readBy: GameId -> Async<Result<Game, string>>)
+  let toErrorMessages msg = AsyncResult.mapError(fun _ -> [msg])
+  let score (readBy: GameId -> Async<Game>)
             (save: Game -> Async<Unit>)
             (id: int64)
             (footballersColor: string)
@@ -41,13 +44,17 @@ module ScoreFlow =
             =
     let id = id |> GameId
     let footballersColor = (if footballersColor = null then "" else footballersColor).ToLowerInvariant()
-    asyncResult {
+    let scoringTeam = validation {
       let! scoringTeam = teamId |> NotEmptyString.create
-      let! teamColor = TeamColor.create footballersColor
+      and! teamColor = TeamColor.create footballersColor
+      return (scoringTeam, teamColor)
+    }
+    asyncResult {
+      let! scoringTeam = scoringTeam
       let! game = readBy id
-      let! scoreResult =
+      let! newGame =
         match game with
-        | OpenGame game -> Ok (recordScore game (scoringTeam, teamColor) DateTime.UtcNow)
-        | FinishedGame _ -> Error "Cannot make a score in finished game."
-      do! save scoreResult
+        | OpenGame game -> recordScore game scoringTeam DateTime.UtcNow |> Ok
+        | FinishedGame _ -> ["Cannot make a score in finished game."] |> Error
+      do! save newGame
     }

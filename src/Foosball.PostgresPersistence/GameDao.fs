@@ -10,7 +10,7 @@ module GameDao =
             use! connection = createConnection ()
             let id = id |> int64
             let! gameJson = connection |> sqlSingle<string> "SELECT data FROM games WHERE id = @id" {|id = id|}
-            let game = Decode.Auto.fromString<Game>(gameJson, CaseStrategy.PascalCase, Extra.empty |> Extra.withBigInt)
+            let game = Decode.Auto.unsafeFromString<Game>(gameJson, CaseStrategy.PascalCase, Extra.empty |> Extra.withBigInt)
             return game
         }
 
