@@ -57,7 +57,7 @@ module HttpHandler =
         let response =
           match creationResult with
           | Ok _ ->
-              ctx.SetHttpHeader "Location" (sprintf "/games/%d" newId)
+              ctx.SetHttpHeader ("Location", (sprintf "/games/%d" newId))
               let links = [ (detailsLink newId); { Rel = "all"; Href = "/games" } ]
               Successful.created (json links) next ctx
           | Error message -> RequestErrors.badRequest (json message) next ctx
