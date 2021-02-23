@@ -16,7 +16,7 @@ let ``GIVEN rules, startDate and gameId WHEN game is opened THEN the scores list
   let gameId = 100 |> GameId
   let teams = (``A team`` Yellow |> fst, ``A team`` Black |> fst)
   // Act
-  let game = openGame rules teams startDate gameId |> function | Ok game -> game | Error error -> failwith error
+  let game = openGame rules teams startDate gameId |> function | Ok game -> game | Error error -> failwith $"$A{error}"
   // Assert
   game.Score |> should haveLength 1
   game.Id |> should equal gameId

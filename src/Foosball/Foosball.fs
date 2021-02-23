@@ -4,6 +4,8 @@ open System
 
 module Game =
   type GameId = bigint
+  type Errors =
+    | TeamsMustBeUnique
   type Rules = { MaxSetPoints: byte; MaxSets: byte }
   type TeamId = NotEmptyString
   type Score = { By: TeamId * TeamColor; At: DateTime }
@@ -59,7 +61,7 @@ module Game =
 
   let openGame rules teams startedAt gameId =
     match teams with
-    | (t1, t2) when t1 = t2 -> Error "Team names must be unique."
+    | (t1, t2) when t1 = t2 -> Errors.TeamsMustBeUnique |> Error
     | _ -> { Id = gameId
              StartedAt = startedAt
              Teams = teams

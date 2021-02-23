@@ -7,12 +7,14 @@ open Xunit
 open FSharp.Control.Tasks.V2
 open TestCompositionRoot
 open HttpContext
+open System
 open FsUnit.Xunit
 
 [<Fact>]
 let ``GIVEN two teams names that are the same WHEN createGameHandler THEN response is bad request.`` () =
   // Arrange
-  let httpRequest = buildMockHttpContext () |> writeToBody { Team1 = "team1"; Team2 = "team1" }
+  let newGameDto = { Team1 = "team1abc"; Team2 = "team1abc" }
+  let httpRequest = buildMockHttpContext () |> writeToBody newGameDto
   let root = testTrunk |> composeRoot
   let httpResponse =
     task {
@@ -22,12 +24,13 @@ let ``GIVEN two teams names that are the same WHEN createGameHandler THEN respon
     } |> Async.AwaitTask |> Async.RunSynchronously |> Option.get
   // Assert
   httpResponse.Response.StatusCode |> should equal StatusCodes.Status400BadRequest
-  httpResponse.Response |> toString |> should haveSubstring "Team names must be unique."
+  httpResponse.Response |> toString |> should haveSubstring $"Names must be unique, but team1: {newGameDto.Team1} and team2: {newGameDto.Team2} were given."
 
 [<Theory>]
 [<InlineData("", "")>]
 [<InlineData(null, null)>]
 [<InlineData("", "Team")>]
+[<InlineData("Team", null)>]
 [<InlineData("", null)>]
 let ``GIVEN two teams names that are at least one is empty or null WHEN createGameHandler THEN response is bad request.`` (team1, team2) =
   // Arrange
@@ -41,7 +44,12 @@ let ``GIVEN two teams names that are at least one is empty or null WHEN createGa
     } |> Async.AwaitTask |> Async.RunSynchronously |> Option.get
   // Assert
   httpResponse.Response.StatusCode |> should equal StatusCodes.Status400BadRequest
-  httpResponse.Response |> toString |> should haveSubstring "Non-empty string is required."
+  if not (String.IsNullOrWhiteSpace team1) then
+    httpResponse.Response |> toString |> should haveSubstring "[\"team2 id cannot be empty.\"]"
+  elif not (String.IsNullOrWhiteSpace team2) then
+    httpResponse.Response |> toString |> should haveSubstring "[\"team1 id cannot be empty.\"]"
+  else
+    httpResponse.Response |> toString |> should haveSubstring "[\"team1 id cannot be empty.\",\"team2 id cannot be empty.\"]"
 
 [<Theory>]
 [<InlineData("")>]

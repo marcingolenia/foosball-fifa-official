@@ -6,7 +6,7 @@ open Trunk
 
 module Root =
   type Root =
-    { CreateGame: int64 -> string -> string -> Async<Result<Unit, string>>
+    { CreateGame: int64 -> string -> string -> Async<Result<Unit, string list>>
       ListGames: Async<seq<Queries.GameOverview>>
       ReadGameBy: int64 -> Async<Queries.GameDetails>
       Score: int64 -> string -> string -> Async<Result<unit, string>>
