@@ -19,4 +19,4 @@ Backlog
 17. ~~Hateoas (restful api ... yeah...)~~
 18. Simulator (client for api) that runs in docker and fires different http request at the api.
 19. Consider separate table for scores.
-20. Consider more smart types for TeamId and Color that won't allow empty string.
+20. ~~Consider more smart types for TeamId and Color that won't allow empty string.~~
