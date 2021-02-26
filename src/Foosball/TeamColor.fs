@@ -10,8 +10,5 @@ module TeamColor =
         | "black" -> Ok Black
         | _ -> Error "Invalid footballers color; acceptable values are: yellow, black"
 
-    let value color =
-      match color with
-      | Yellow -> "yellow"
-      | Black -> "black"
+    let value = function Yellow -> "yellow" | _ -> "black"
 

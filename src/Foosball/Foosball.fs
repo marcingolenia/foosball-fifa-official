@@ -45,7 +45,7 @@ module Game =
       | _ -> SetInPlay
 
   let recordScore (game: OpenGame) (scoringTeam: TeamId * TeamColor) scoredAt: Game =
-      let finishedSets = game.Score.[.. game.Score.Length - 2]
+      let finishedSets = game.Score.[..^1]
       let currentSetWithNewPoint = [(game.Score |> List.last) @ [{ By = scoringTeam; At = scoredAt }]]
       match (game, scoringTeam) with
       | SetInPlay -> { game with Score = finishedSets @ currentSetWithNewPoint } |> Game.OpenGame
