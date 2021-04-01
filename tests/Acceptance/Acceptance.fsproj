@@ -8,15 +8,21 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <Compile Include="TestCompositionRoot.fs" />
-        <Compile Include="api_successes_with_hateoas.fs" />
-        <Compile Include="api_badrequests.fs" />
+        <Compile Include="UsingFakeHttpCtx\TestCompositionRoot.fs" />
+        <Compile Include="UsingFakeHttpCtx\api_successes_with_hateoas.fs" />
+        <Compile Include="UsingFakeHttpCtx\api_badrequests.fs" />
+        <Compile Include="UsingTestServer\TestApi.fs" />
+        <Compile Include="UsingTestServer\api_badrequests2.fs" />
         <Compile Include="Program.fs" />
+        <Content Include="appsettings.json">
+          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </Content>
     </ItemGroup>
 
     <ItemGroup>
         <PackageReference Include="FsUnit.xUnit" Version="4.0.4" />
-        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.8.3" />
+        <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="5.0.4" />
+        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.9.4" />
         <PackageReference Include="xunit" Version="2.4.1" />
         <PackageReference Include="xunit.runner.visualstudio" Version="2.4.3">
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
