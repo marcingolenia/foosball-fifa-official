@@ -1,5 +1,6 @@
 module api_successes_with_hateoas
 
+open FsToolkit.ErrorHandling
 open System
 open Acceptance
 open Foosball
@@ -19,19 +20,22 @@ let ``GIVEN two teams names WHEN createGameHandler THEN response contains locati
   let httpRequest = buildMockHttpContext () |> writeToBody { Team1 = "Team A1"; Team2 = "Team B1" }
   let root = testTrunk |> ``replace InsertGame`` (fun game -> async { persistedGame <- Some game; return () })
                        |> composeRoot
-  let httpResponse =
+  let asyncHttpResponse =
     task {
       // Act
       let! httpResponse = HttpHandler.createGameHandler root.CreateGame root.GenerateId next httpRequest
       return httpResponse
-    } |> Async.AwaitTask |> Async.RunSynchronously |> Option.get
+    } |> Async.AwaitTask
   // Assert
-  let actualGame = persistedGame.Value |> function | OpenGame game -> game | _ -> failwith "Game should be open"
-  let links = httpResponse.Response |> deserializeResponse<Link list>
-  httpResponse.Response.Headers.["Location"] |> should haveSubstring $"games/{actualGame.Id}"
-  links |> should contain { Rel = "self"; Href = $"/games/{actualGame.Id}" }
-  links |> should contain { Rel = "all"; Href = $"/games" }
-  links.Length |> should equal 2
+  async {
+    let! httpResponse = (asyncHttpResponse |> Async.map(Option.get))
+    let actualGame = persistedGame.Value |> function | OpenGame game -> game | _ -> failwith "Game should be open"
+    let links = httpResponse.Response |> deserializeResponse<Link list>
+    httpResponse.Response.Headers.["Location"] |> should haveSubstring $"games/{actualGame.Id}"
+    links |> should contain { Rel = "self"; Href = $"/games/{actualGame.Id}" }
+    links |> should contain { Rel = "all"; Href = $"/games" }
+    links.Length |> should equal 2
+  }
 
 [<Fact>]
 let ``GIVEN open and finished games WHEN listGamesHandler THEN response contains score action links for open games only AND action link fo getting game details AND games results are presenting persisted games.`` () =
@@ -47,20 +51,24 @@ let ``GIVEN open and finished games WHEN listGamesHandler THEN response contains
       Team2Score = 2 }: Queries.GameOverview)
   let httpRequest = buildMockHttpContext () |> writeToBody { Team1 = "Team A1"; Team2 = "Team B1" }
   let root = testTrunk |> ``replace GamesQuery`` (async { return games }) |> composeRoot
-  let httpResponse =
+  let asyncHttpResponse =
     task {
       // Act
       let! httpResponse = HttpHandler.listGamesHandler root.ListGames next httpRequest
-      return httpResponse } |> Async.AwaitTask |> Async.RunSynchronously |> Option.get
+      return httpResponse
+      } |> Async.AwaitTask
   // Assert
-  let linkedGames = httpResponse.Response |> deserializeResponse<LinkedResult<Queries.GameOverview> seq>
-  (linkedGames, games) ||> Seq.iter2(fun linkedGame game ->
+  async {
+    let! httpResponse = (asyncHttpResponse |> Async.map(Option.get))
+    let linkedGames = httpResponse.Response |> deserializeResponse<LinkedResult<Queries.GameOverview> seq>
+    (linkedGames, games) ||> Seq.iter2(fun linkedGame game ->
     linkedGame.Result |> should equal game
     linkedGame.Links |> should contain { Rel = "self"; Href = $"/games/{game.Id}" }
     match linkedGame.Result.FinishedAt with
     | Some _ -> ()
     | None _ -> linkedGame.Links |> should contain { Rel = "score"; Href = $"/games/{game.Id}/score" }
     )
+  }
 
 [<Fact>]
 let ``GIVEN open game WHEN readGameByHandler THEN response contains score action link AND link to all games.`` () =
@@ -81,17 +89,20 @@ let ``GIVEN open game WHEN readGameByHandler THEN response contains score action
   }
   let httpRequest = buildMockHttpContext () |> writeToBody { Team1 = "Team A1"; Team2 = "Team B1" }
   let root = testTrunk |> ``replace GameQuery`` (fun _ -> async { return game }) |> composeRoot
-  let httpResponse =
+  let asyncHttpResponse =
     task {
       // Act
       let! httpResponse = HttpHandler.readGameByHandler root.ReadGameBy game.Id next httpRequest
-      return httpResponse } |> Async.AwaitTask |> Async.RunSynchronously |> Option.get
+      return httpResponse } |> Async.AwaitTask
   // Assert
-  let linkedGame = httpResponse.Response |> deserializeResponse<LinkedResult<Queries.GameDetails>>
-  linkedGame.Links |> should contain { Rel = "score"; Href = $"/games/{game.Id}/score" }
-  linkedGame.Links |> should contain { Rel = "all"; Href = $"/games" }
-  linkedGame.Links.Length |> should equal 2
-  linkedGame.Result |> should equal game
+  async {
+    let! httpResponse = (asyncHttpResponse |> Async.map(Option.get))
+    let linkedGame = httpResponse.Response |> deserializeResponse<LinkedResult<Queries.GameDetails>>
+    linkedGame.Links |> should contain { Rel = "score"; Href = $"/games/{game.Id}/score" }
+    linkedGame.Links |> should contain { Rel = "all"; Href = $"/games" }
+    linkedGame.Links.Length |> should equal 2
+    linkedGame.Result |> should equal game
+  }
 
 [<Fact>]
 let ``GIVEN open game WHEN scoreHandler THEN the game score is updated AND link to game is returned.`` () =
@@ -107,14 +118,18 @@ let ``GIVEN open game WHEN scoreHandler THEN the game score is updated AND link 
   let root = testTrunk |> ``replace ReadGameBy`` (fun _ -> async { return gameBeforeUpdate |> Game.OpenGame |> Ok })
                        |> ``replace UpdateGame`` (fun game -> async { gameAfterUpdate <- Some game; return () })
                        |> composeRoot
-  let httpResponse =
+  let asyncHttpResponse =
     task {
       // Act
       let! httpResponse = HttpHandler.scoreHandler root.Score gameId next httpRequest
-      return httpResponse } |> Async.AwaitTask |> Async.RunSynchronously |> Option.get
+      return httpResponse
+    } |> Async.AwaitTask
   // Assert
-  let gameAfterUpdate = gameAfterUpdate.Value |> function | OpenGame game -> game | _ -> failwith "Game should be open"
-  let links = httpResponse.Response |> deserializeResponse<Link list>
-  links |> should contain { Rel = "up"; Href = $"/games/{gameId}" }
-  links.Length |> should equal 1
-  gameBeforeUpdate.Score.Head.Length |> should lessThan gameAfterUpdate.Score.Head.Length
+  async {
+    let! httpResponse = (asyncHttpResponse |> Async.map(Option.get))
+    let gameAfterUpdate = gameAfterUpdate.Value |> function | OpenGame game -> game | _ -> failwith "Game should be open"
+    let links = httpResponse.Response |> deserializeResponse<Link list>
+    links |> should contain { Rel = "up"; Href = $"/games/{gameId}" }
+    links.Length |> should equal 1
+    gameBeforeUpdate.Score.Head.Length |> should lessThan gameAfterUpdate.Score.Head.Length
+  }

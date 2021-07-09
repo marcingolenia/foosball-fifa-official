@@ -12,20 +12,20 @@ let ``GIVEN open game WHEN inserted THEN after read it is fully restored`` () =
     // Arrange
     let id = (Toolbox.generateId() |> GameId)
     let expectedGame = ``An open game`` |> ``with id set to`` id  |> Game.OpenGame
-    asyncResult {
+    async {
         // Act
         do! insert DbConnection.create expectedGame
         // Assert
         let! actualGame = readBy DbConnection.create id
         actualGame |> should equal expectedGame
-    } |> Async.RunSynchronously
+    }
 
 [<Fact>]
 let ``GIVEN open game WHEN updated THEN after read it is has the updates`` () =
     // Arrange
     let id = (Toolbox.generateId() |> GameId)
     let gameToUpdate = ``An open game`` |> ``with id set to`` id  |> Game.OpenGame
-    asyncResult {
+    async {
         // Act
         do! insert DbConnection.create gameToUpdate
         let expectedGame = ``An open game``
@@ -36,4 +36,4 @@ let ``GIVEN open game WHEN updated THEN after read it is has the updates`` () =
         let! actualGame = readBy DbConnection.create id
         actualGame |> should not' (be gameToUpdate)
         actualGame |> should equal expectedGame
-    } |> Async.RunSynchronously
+    }

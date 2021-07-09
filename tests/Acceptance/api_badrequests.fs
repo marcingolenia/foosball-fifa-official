@@ -1,7 +1,6 @@
 module api_badrequests
 
 open Acceptance
-open Foosball
 open Foosball.Api
 open Microsoft.AspNetCore.Http
 open Xunit
@@ -9,6 +8,7 @@ open FSharp.Control.Tasks.V2
 open TestCompositionRoot
 open HttpContext
 open FsUnit.Xunit
+open FsToolkit.ErrorHandling
 
 [<Theory>]
 [<InlineData("", "")>]
@@ -18,15 +18,18 @@ let ``GIVEN two teams names that are the same WHEN createGameHandler THEN respon
   // Arrange
   let httpRequest = buildMockHttpContext () |> writeToBody { Team1 = team1; Team2 = team2 }
   let root = testTrunk |> composeRoot
-  let httpResponse =
+  let asyncHttpResponse =
     task {
       // Act
       let! httpResponse = HttpHandler.createGameHandler root.CreateGame root.GenerateId next httpRequest
       return httpResponse
-    } |> Async.AwaitTask |> Async.RunSynchronously |> Option.get
+    } |> Async.AwaitTask
   // Assert
-  httpResponse.Response.StatusCode |> should equal StatusCodes.Status400BadRequest
-  httpResponse.Response |> toString |> should haveSubstring "Team names must be unique."
+  async {
+    let! httpResponse = (asyncHttpResponse |> Async.map(Option.get))
+    httpResponse.Response.StatusCode |> should equal StatusCodes.Status400BadRequest
+    httpResponse.Response |> toString |> should haveSubstring "Team names must be unique."
+  }
 
 [<Theory>]
 [<InlineData("")>]
@@ -37,12 +40,15 @@ let ``GIVEN team scores AND team color is not yellow or black WHEN scoreHandler 
   // Arrange
   let httpRequest = buildMockHttpContext () |> writeToBody { Team = "Team A1"; Color = color }
   let root = testTrunk |> composeRoot
-  let httpResponse =
+  let asyncHttpResponse =
     task {
       // Act
       let! httpResponse = HttpHandler.scoreHandler root.Score (int64 1) next httpRequest
       return httpResponse
-    } |> Async.AwaitTask |> Async.RunSynchronously |> Option.get
+    } |> Async.AwaitTask
   // Assert
-  httpResponse.Response.StatusCode |> should equal StatusCodes.Status400BadRequest
-  httpResponse.Response |> toString |> should haveSubstring "Invalid footballers color; acceptable values are: yellow, black"
+  async {
+    let! httpResponse = (asyncHttpResponse |> Async.map(Option.get))
+    httpResponse.Response.StatusCode |> should equal StatusCodes.Status400BadRequest
+    httpResponse.Response |> toString |> should haveSubstring "Invalid footballers color; acceptable values are: yellow, black"
+  }
